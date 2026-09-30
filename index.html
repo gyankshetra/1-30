@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="hi"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>gravitation-30Q BPSC TRE 4</title>
+<style>
+:root{--g:#166534;--lg:#dcfce7}
+body{margin:0;font-family:system-ui;background:#f0fdf4}
+.header{background:var(--g);color:#fff;padding:12px 14px;display:flex;justify-content:space-between;align-items:center}
+.subbar{background:var(--lg);padding:8px 12px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5}
+.badge{background:var(--g);color:#fff;padding:6px 12px;border-radius:20px;font-weight:800;font-size:13px}
+.badge2{background:#fff;color:var(--g);border:1.5px solid var(--g);padding:6px 12px;border-radius:20px;font-weight:800;cursor:pointer}
+.timer{background:#fff;color:var(--g);border:1.5px solid var(--g);padding:5px 10px;border-radius:20px;font-weight:800;font-size:13px}
+.card{background:#fff;margin:12px;border-radius:16px;padding:14px;box-shadow:0 4px 10px rgba(0,0,0,.07)}
+.opt{border:1.6px solid #d1d5db;padding:11px;border-radius:10px;margin:7px 0;cursor:pointer}
+.opt.sel{border-color:var(--g);background:var(--lg);font-weight:700;color:#14532d}
+.btn{padding:12px;border-radius:12px;font-weight:800;border:none;cursor:pointer}
+.btn-g{background:var(--g);color:#fff}.btn-o{background:#fff;border:2px solid var(--g);color:var(--g)}
+.fact{background:#f9fafb;border-left:3px solid #16a34a;padding:7px 9px;margin:5px 0;border-radius:5px;font-size:13px}
+#qPopup{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99;align-items:flex-end;justify-content:center}
+#qPopup.show{display:flex}.pbox{background:#fff;width:100%;max-width:420px;border-radius:20px 20px 0 0;padding:16px;max-height:85vh;overflow:auto}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px}
+.qn{padding:10px;text-align:center;border-radius:10px;background:#e5e7eb;font-weight:700;cursor:pointer}
+.qn.act{background:var(--g);color:#fff}.qn.done{background:#bbf7d0}
+</style></head>
+<body>
+<div class="header"><span style="font-weight:800">⌂ Gyankshetra</span><span class="timer" id="timer">00:00</span></div>
+<div class="subbar">
+<div style="display:flex;gap:6px;align-items:center"><span style="font-weight:700;color:#14532d;font-size:13px">30Q - गुरुत्वाकर्षण</span><span class="badge" id="qbadge">1/30Q</span></div>
+<button class="badge2" onclick="openPopup()">☰ 30Q</button>
+</div>
+<div id="p-start" style="padding:16px">
+<h3 style="margin:0">30Q - गुरुत्वाकर्षण</h3>
+<p style="font-size:12px;color:#555">BPSC TRE 4 नया पैटर्न: 5 विकल्प, गलत पर 1/3 नेगेटिव, E = प्रयास नहीं किया</p>
+<div style="display:flex;gap:8px;align-items:flex-end;margin-top:20px">
+<div style="flex:1"><label style="font-size:12px;font-weight:700">Candidate Name</label><input id="cName" placeholder="नाम लिखें" style="width:100%;padding:12px;border-radius:10px;border:1.5px solid #ccc;margin-top:4px"></div>
+<button class="btn btn-g" style="padding:13px 22px" onclick="startQuiz()">Start →</button>
+</div>
+</div>
+<div id="p-quiz" style="display:none">
+<div class="card"><div id="qL" style="color:#166534;font-weight:700;font-size:12px"></div><h3 id="qT" style="font-size:15px;margin:6px 0"></h3><div id="opts"></div></div>
+<div style="padding:0 12px"><div style="height:6px;background:#bbf7d0;border-radius:10px"><div id="bar" style="height:100%;background:#166534;width:0%"></div></div></div>
+<div style="display:flex;gap:8px;padding:10px 12px"><button class="btn btn-o" style="flex:1" onclick="prev()">पिछला</button><button class="btn btn-g" style="flex:1" onclick="next()">अगला →</button></div>
+</div>
+<div id="p-result" style="display:none;padding:12px">
+<div class="card" style="text-align:center"><h1 id="score" style="color:#166534"></h1><p id="scoreP"></p><p id="negInfo" style="font-size:12px;color:#92400e"></p></div>
+<button class="btn btn-g" style="width:100%" onclick="location.reload()">फिर से शुरू</button>
+<button class="btn btn-o" style="width:100%;margin:8px 0" onclick="toggleReview()">Review</button>
+<div id="reviewBox" style="display:none;margin-top:12px"><div class="card" id="analysisCard"></div><div style="display:flex;justify-content:space-between"><button class="btn btn-o" onclick="slidePrev()">‹ पिछला</button><span id="slideNo" style="padding:10px;font-weight:700"></span><button class="btn btn-g" onclick="slideNext()">अगला ›</button></div></div>
+</div>
+<div id="qPopup" onclick="if(event.target==this)closePopup()"><div class="pbox">
+<div style="display:flex;justify-content:space-between"><b>सभी प्रश्न</b><span onclick="closePopup()" style="cursor:pointer">✕</span></div>
+<div class="grid" id="grid"></div>
+<div style="margin-top:14px"><button class="btn btn-g" style="width:100%" onclick="closePopup();showResult()">Submit करें</button><p style="font-size:11px;color:#666;text-align:center;margin-top:6px">E = प्रयास नहीं किया, खाली पर भी 1/3 नेगेटिव</p></div>
+</div></div>
+<script>
+let totalQ=30;
+const Q=[
+{q:"गुरुत्वाकर्षण का नियम किसने दिया?",opts:["न्यूटन","गैलीलियो","केपलर","आइंस्टीन","प्रयास नहीं किया"],ans:0,analysis:"न्यूटन ने बताया हर वस्तु दूसरी को खींचती है।",facts:["सेब गिरने से न्यूटन ने यह सोचा।","हर चीज दूसरी चीज को खींचती है।","पृथ्वी हमें नीचे खींचती है।","चांद पृथ्वी के चारों ओर घूमता है।","यह नियम हर जगह लगता है।"]},
+{q:"जी का मान कितना होता है?",opts:["6.67×10^-11","9.8","6.67×10^-9","6×10^-11","प्रयास नहीं किया"],ans:0,analysis:"जी का मान बहुत छोटा होता है।",facts:["जी को स्थिरांक कहते हैं।","इसका मान बहुत छोटा है।","इसे प्रयोगशाला में नापा गया।","यह मान हर जगह एक सा है।","इससे बल कमजोर लगता है।"]},
+{q:"पृथ्वी पर जी का मान कितना है?",opts:["9.8","10","6.67","0","प्रयास नहीं किया"],ans:0,analysis:"धरती पर गिरने की गति 9.8 होती है।",facts:["पहाड़ पर जी थोड़ा कम होता है।","ध्रुव पर जी थोड़ा ज्यादा होता है।","रोज के हिसाब में 10 मानते हैं।","चांद पर जी बहुत कम है।","केंद्र पर जी शून्य हो जाता है।"]},
+{q:"मुक्त गिरने पर वजन क्या होता है?",opts:["शून्य","9.8","द्रव्यमान के बराबर","बढ़ता है","प्रयास नहीं किया"],ans:0,analysis:"गिरते समय वजन शून्य लगता है।",facts:["लिफ्ट टूटने पर ऐसा लगता है।","अंतरिक्ष यात्री तैरते हैं।","वजन नापने की मशीन शून्य दिखाती है।","द्रव्यमान खत्म नहीं होता।","इसे भारहीनता कहते हैं।"]},
+{q:"केपलर का तीसरा नियम क्या है?",opts:["समय वर्ग दूरी घन के बराबर","समय दूरी वर्ग के बराबर","दूरी वर्ग समय के बराबर","समय वर्ग दूरी वर्ग के बराबर","प्रयास नहीं किया"],ans:0,analysis:"दूर के ग्रह का साल लंबा होता है।",facts:["केपलर ने ग्रहों को देखकर नियम बनाए।","तीसरे नियम से दूरी पता चलती है।","पृथ्वी का साल 365 दिन है।","दूर के ग्रह का साल बहुत बड़ा है।","उपग्रह की जगह इसी से तय होती है।"]},
+{q:"पृथ्वी से पलायन वेग कितना है?",opts:["11.2 किमी प्रति सेकंड","9.8","7.9","15","प्रयास नहीं किया"],ans:0,analysis:"इतनी तेज फेंकने पर चीज वापस नहीं आती।",facts:["इसे पलायन वेग कहते हैं।","रॉकेट को इससे तेज जाना होता है।","चांद से यह वेग कम है।","यह पृथ्वी के वजन पर निर्भर है।","फेंकी चीज के वजन पर निर्भर नहीं है।"]},
+{q:"चांद पर जी कितना है?",opts:["छठा हिस्सा","आधा","तीसरा हिस्सा","दसवां हिस्सा","प्रयास नहीं किया"],ans:0,analysis:"चांद छोटा है इसलिए वहां जी कम है।",facts:["चांद पर वजन छह गुना कम होता है।","वहां ऊंची छलांग लगती है।","वहां चलना मुश्किल है।","मंगल पर जी थोड़ा कम है।","सूरज पर जी बहुत ज्यादा है।"]},
+{q:"गुरुत्व बल किस प्रकार का है?",opts:["केंद्रीय और संरक्षी","अकेंद्रीय","घर्षण","छद्म","प्रयास नहीं किया"],ans:0,analysis:"यह बल केंद्र की ओर लगता है।",facts:["यह बल बीच की ओर खींचता है।","इसमें ऊर्जा बनी रहती है।","घर्षण में ऊर्जा खत्म होती है।","बिजली का बल भी ऐसा ही है।","यह बल रास्ते पर निर्भर नहीं है।"]},
+{q:"ऊंचाई पर जी क्या होता है?",opts:["घटता है","बढ़ता है","समान","शून्य","प्रयास नहीं किया"],ans:0,analysis:"ऊपर जाने पर जी घटता है।",facts:["पहाड़ पर वजन कम लगता है।","हवाई जहाज में जी कम होता है।","बहुत ऊपर जी बहुत कम हो जाता है।","उपग्रह में जी कम पर शून्य नहीं।","इसी से उपग्रह टिका रहता है।"]},
+{q:"पृथ्वी के केंद्र पर जी कितना?",opts:["शून्य","9.8","4.9","अनंत","प्रयास नहीं किया"],ans:0,analysis:"केंद्र पर चारों ओर खिंचाव बराबर, जी शून्य।",facts:["गहराई में जी घटता है।","केंद्र पर वजन शून्य होता है।","केंद्र पर दबाव सबसे ज्यादा है।","खदान में वजन कम लगता है।","गहराई का ग्राफ सीधी रेखा है।"]},
+{q:"भारहीनता क्यों होती है?",opts:["मुक्त गिरने से","जी शून्य","द्रव्यमान शून्य","हवा नहीं","प्रयास नहीं किया"],ans:0,analysis:"गिरते समय भारहीनता लगती है।",facts:["अंतरिक्ष स्टेशन गिर रहा होता है।","वहां जी शून्य नहीं होता।","वहां हवा न होने से नहीं।","वजन मशीन शून्य दिखाती है।","पानी वहां गोला बन जाता है।"]},
+{q:"जी और जी में संबंध क्या है?",opts:["जी बराबर जीएम बटा आर वर्ग","जी बराबर जीएम","जी बराबर जी बटा आर वर्ग","जी बराबर एमजी","प्रयास नहीं किया"],ans:0,analysis:"छोटा जी बड़े जी से बनता है।",facts:["छोटा जी धरती पर लगता है।","बड़ा जी हर जगह एक सा है।","छोटा जी ग्रह पर बदलता है।","बड़ा जी प्रयोगशाला में नापते हैं।","इससे धरती का वजन निकलता है।"]},
+{q:"द्रव्यमान और वजन में अंतर क्या है?",opts:["द्रव्यमान स्थिर वजन जी पर","दोनों एक","वजन स्थिर","द्रव्यमान जी पर","प्रयास नहीं किया"],ans:0,analysis:"द्रव्यमान नहीं बदलता, वजन बदलता है।",facts:["द्रव्यमान किलोग्राम में नापते हैं।","वजन न्यूटन में नापते हैं।","चांद पर द्रव्यमान वही रहता है।","चांद पर वजन कम हो जाता है।","तराजू द्रव्यमान नापती है।"]},
+{q:"स्थितिज ऊर्जा का सूत्र क्या है?",opts:["ऋण जीएमएम बटा आर","जीएमएम बटा आर","एमजीएच","जीएम बटा आर","प्रयास नहीं किया"],ans:0,analysis:"ऊर्जा ऋण होती है क्योंकि बंधा है।",facts:["अनंत पर ऊर्जा शून्य मानते हैं।","बंधे होने से ऊर्जा ऋण होती है।","ऊपर जाने पर ऊर्जा बढ़ती है।","पलायन पर कुल ऊर्जा शून्य होती है।","यह ऊर्जा दूरी पर निर्भर है।"]},
+{q:"उपग्रह की गति कितनी होती है?",opts:["जीआर का वर्गमूल","दो जीआर का वर्गमूल","जीआर","दो जीआर","प्रयास नहीं किया"],ans:0,analysis:"धरती के पास गति 7.9 किमी प्रति सेकंड।",facts:["इसे कक्षीय वेग कहते हैं।","ऊपर जाने पर गति कम होती है।","गति उपग्रह के वजन पर नहीं।","पलायन वेग इससे ज्यादा है।","इसी गति से उपग्रह टिकता है।"]},
+{q:"भूस्थिर उपग्रह का समय कितना है?",opts:["24 घंटा","12 घंटा","6 घंटा","1 घंटा","प्रयास नहीं किया"],ans:0,analysis:"धरती के साथ घूमता है 24 घंटा।",facts:["यह धरती के साथ साथ चलता है।","इसकी ऊंचाई 36 हजार किमी है।","एक उपग्रह से एक तिहाई धरती दिखती है।","तीन उपग्रह से पूरी धरती दिखती है।","टीवी सिग्नल इसी से आता है।"]},
+{q:"गुरुत्व की सीमा कितनी है?",opts:["अनंत","सीमित","100 किमी","धरती तक","प्रयास नहीं किया"],ans:0,analysis:"गुरुत्व की सीमा का कोई अंत नहीं।",facts:["यह बल बहुत दूर तक लगता है।","दूर जाने पर बहुत कमजोर हो जाता है।","सबसे कमजोर बल यही है।","फिर भी पूरी दुनिया इसी से बनी है।","तारे इसी बल से बने हैं।"]},
+{q:"गहराई पर जी क्या होता है?",opts:["घटता है","बढ़ता है","समान","तुरंत शून्य","प्रयास नहीं किया"],ans:0,analysis:"नीचे जाने पर जी घटता है।",facts:["खदान में वजन कम लगता है।","गहराई में प्रभावी वजन कम होता है।","केंद्र पर जी शून्य हो जाता है।","गहराई का असर सीधा होता है।","ऊंचाई और गहराई दोनों में जी घटता है।"]},
+{q:"ज्वार क्यों आता है?",opts:["चांद के खिंचाव से","सूरज की रोशनी से","हवा से","घूमने से","प्रयास नहीं किया"],ans:0,analysis:"चांद के खिंचाव से समुद्र ऊपर उठता है।",facts:["चांद के सामने ज्वार ऊंचा होता है।","सूरज और चांद एक लाइन में तो ज्वार ज्यादा।","नब्बे डिग्री पर ज्वार कम होता है।","ज्वार से बिजली बनती है।","मछुआरे ज्वार देखकर जाते हैं।"]},
+{q:"जी को सार्वत्रिक क्यों कहते हैं?",opts:["हर जगह समान","केवल धरती पर","बदलता है","ग्रह पर अलग","प्रयास नहीं किया"],ans:0,analysis:"जी का मान हर जगह एक सा रहता है।",facts:["जी का मान नहीं बदलता।","छोटा जी बदलता है।","जी को प्रयोगशाला में नापा।","यह नियम सब जगह लगता है।","इसी से यह सार्वत्रिक है।"]},
+{q:"वजन ध्रुव पर ज्यादा क्यों?",opts:["ज्यादा","कम","समान","शून्य","प्रयास नहीं किया"],ans:0,analysis:"ध्रुव पर धरती चपटी है और घुमाव नहीं।",facts:["ध्रुव पर त्रिज्या कम है।","विषुवत पर घुमाव से जी कम लगता है।","ध्रुव पर 9.83 होता है।","विषुवत पर 9.78 होता है।","आधा प्रतिशत का फर्क है।"]},
+{q:"पलायन वेग वजन पर निर्भर है?",opts:["नहीं","हां वजन पर","आकार पर","रंग पर","प्रयास नहीं किया"],ans:0,analysis:"फेंकी चीज के वजन पर निर्भर नहीं।",facts:["पंख और पत्थर को समान वेग चाहिए।","धरती के वजन पर निर्भर है।","चांद से कम वेग चाहिए।","काले छेद से रोशनी भी नहीं निकलती।","कोण पर निर्भर नहीं है।"]},
+{q:"क्षेत्र तीव्रता का मात्रक क्या है?",opts:["न्यूटन प्रति किलोग्राम","न्यूटन","किलोग्राम प्रति न्यूटन","मीटर प्रति सेकंड","प्रयास नहीं किया"],ans:0,analysis:"बल बटा द्रव्यमान।",facts:["यह जी के बराबर होता है।","यह दिशा बताता है।","दिशा केंद्र की ओर होती है।","रेखाएं अंदर की ओर होती हैं।","विभव से इसका संबंध है।"]},
+{q:"दूरी दोगुनी तो बल कितना?",opts:["चौथाई","चार गुना","दोगुना","समान","प्रयास नहीं किया"],ans:0,analysis:"दूरी दोगुनी बल चौथाई।",facts:["बल दूरी के वर्ग के उल्टा है।","रोशनी भी ऐसे ही घटती है।","द्रव्यमान दोगुना बल दोगुना।","दूरी तिगुनी बल नौवां हिस्सा।","हिसाब में अनुपात काम आता है।"]},
+{q:"कौन सा नियम गुरुत्व से नहीं निकलता?",opts:["डब्ल्यू बराबर एमजी तो परिभाषा है","केपलर","ज्वार","ग्रह गति","प्रयास नहीं किया"],ans:0,analysis:"डब्ल्यू बराबर एमजी परिभाषा है।",facts:["वजन का सूत्र परिभाषा है।","केपलर नियम गुरुत्व से बनते हैं।","ज्वार गुरुत्व से आता है।","उपग्रह गति गुरुत्व से है।","जी का बदलना भी इसी से है।"]},
+{q:"जी अधिकतम कहां है?",opts:["ध्रुव","विषुवत","केंद्र","चांद","प्रयास नहीं किया"],ans:0,analysis:"ध्रुव पर जी सबसे ज्यादा।",facts:["ध्रुव पर त्रिज्या कम है।","घुमाव का असर ध्रुव पर नहीं।","ध्रुव पर 9.83 है।","विषुवत पर सबसे कम है।","औसत 9.8 मानते हैं।"]},
+{q:"विभव शून्य कहां है?",opts:["अनंत पर","केंद्र पर","सतह पर","चांद पर","प्रयास नहीं किया"],ans:0,analysis:"बहुत दूर विभव शून्य मानते हैं।",facts:["अनंत पर शून्य मानते हैं।","बंधा होने से ऋण होता है।","सतह पर ऋण होता है।","पलायन पर कुल शून्य होता है।","ग्राफ अनंत पर शून्य छूता है।"]},
+{q:"न्यूटन नियम कब विफल होता है?",opts:["बहुत भारी और तेज गति पर","कम वजन पर","हर जगह","कभी नहीं","प्रयास नहीं किया"],ans:0,analysis:"बहुत भारी चीज पर आइंस्टीन का नियम लगता है।",facts:["बुध ग्रह की चाल न्यूटन से नहीं मिली।","आइंस्टीन ने सही बताया।","जीपीएस में आइंस्टीन का सुधार लगता है।","साधारण जगह न्यूटन सही है।","काले छेद में न्यूटन विफल है।"]},
+{q:"गुरुत्व सबसे कमजोर क्यों है?",opts:["जी बहुत छोटा","वजन कम","दूरी ज्यादा","समय","प्रयास नहीं किया"],ans:0,analysis:"जी का मान बहुत छोटा इसलिए कमजोर।",facts:["चार बलों में सबसे कमजोर है।","नाभिकीय बल सबसे मजबूत है।","जी छोटा इसलिए कमजोर लगता है।","फिर भी दूर तक असर करता है।","ब्रह्मांड इसी से बना है।"]}
+];
+let cur=0,selAns=Array(totalQ).fill(null),reviewIndex=0,sec=0,tInt;
+let grid=document.getElementById('grid');
+Q.forEach((_,i)=>{let d=document.createElement('div');d.className='qn';d.innerText=i+1;d.onclick=()=>{cur=i;showQ();closePopup();};grid.appendChild(d);});
+function openPopup(){document.getElementById('qPopup').classList.add('show');updGrid();}
+function closePopup(){document.getElementById('qPopup').classList.remove('show');}
+function updGrid(){[...grid.children].forEach((e,i)=>{e.className='qn'+(i==cur?' act':'')+(selAns[i]!=null&&i!=cur?' done':'');});}
+function startQuiz(){if(!cName.value){alert('नाम लिखें');return;}document.getElementById('p-start').style.display='none';document.getElementById('p-quiz').style.display='block';tInt=setInterval(()=>{sec++;let m=Math.floor(sec/60),s=sec%60;timer.innerText=(m<10?'0':'')+m+':'+(s<10?'0':'')+s;},1000);showQ();}
+function showQ(){let qq=Q[cur];qL.innerText='प्रश्न '+(cur+1)+' / '+totalQ;document.getElementById('qT').innerText=qq.q;qbadge.innerText=(cur+1)+'/'+totalQ+'Q';bar.style.width=((cur+1)/totalQ*100)+'%';opts.innerHTML=qq.opts.map((o,i)=>`<div class="opt ${selAns[cur]==i?'sel':''}" onclick="selAns[${cur}]=${i};showQ()">${String.fromCharCode(65+i)}. ${o}</div>`).join('');updGrid();}
+function next(){if(cur<totalQ-1){cur++;showQ();}else showResult();}
+function prev(){if(cur>0){cur--;showQ();}}
+function showResult(){clearInterval(tInt);document.getElementById('p-quiz').style.display='none';document.getElementById('p-result').style.display='block';let correct=0,attempt=0,notAttempt=0;selAns.forEach((v,i)=>{if(v==4||v==null)notAttempt++;else{attempt++;if(v==Q[i].ans)correct++;}});let wrong=attempt-correct;let neg=wrong*(1/3);let finalScore=correct-neg;score.innerText=finalScore.toFixed(2)+'/'+totalQ;scoreP.innerText='नाम: '+cName.value+' | सही: '+correct+' | गलत: '+wrong+' | E/छोड़ा: '+notAttempt;negInfo.innerText='BPSC TRE 4 नया नियम: Final = सही - (गलत×1/3) | E पर कोई नेगेटिव नहीं';reviewIndex=0;showAnalysis();}
+function toggleReview(){reviewBox.style.display=reviewBox.style.display=='none'?'block':'none';}
+function showAnalysis(){let qq=Q[reviewIndex];slideNo.innerText=(reviewIndex+1)+' / '+totalQ;analysisCard.innerHTML=`<b style="color:#166534">Q${reviewIndex+1}</b>: ${qq.q}<br><br>✓ सही: ${qq.opts[qq.ans]}<br>आपका: ${selAns[reviewIndex]!=null?qq.opts[selAns[reviewIndex]]:'छोड़ा'}<br><br>विश्लेषण: ${qq.analysis}<br><br>Fact:<br>${qq.facts.map(f=>`<div class="fact">${f}</div>`).join('')}`;}
+function slideNext(){if(reviewIndex<totalQ-1){reviewIndex++;showAnalysis();}}
+function slidePrev(){if(reviewIndex>0){reviewIndex--;showAnalysis();}}
+</script>
+</body></html>
